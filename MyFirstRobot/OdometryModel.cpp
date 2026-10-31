@@ -25,6 +25,14 @@ void OdometryModel_c::reset(float x, float y, float theta) {
   previousRightCount = 0;
 }
 
+void OdometryModel_c::reset(float x, float y, float theta,
+                            int32_t leftCount, int32_t rightCount) {
+  pose = {x, y, theta};
+  initialised = true;
+  previousLeftCount = leftCount;
+  previousRightCount = rightCount;
+}
+
 bool OdometryModel_c::update(int32_t leftCount, int32_t rightCount) {
   if (!isfinite(leftWheelRadiusMm) || leftWheelRadiusMm <= 0.0f ||
       !isfinite(rightWheelRadiusMm) || rightWheelRadiusMm <= 0.0f ||

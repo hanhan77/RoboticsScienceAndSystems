@@ -1,0 +1,57 @@
+\documentclass[border=6pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
+\definecolor{odomblue}{HTML}{2A78D6}
+\definecolor{gyroorange}{HTML}{D95926}
+\begin{document}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=9mm, ylabels at=edge left},
+  width=43mm, height=42mm,
+  xmin=0, xmax=3.1, ymin=0, ymax=105,
+  ytick={0,20,40,60,80,100},
+  xlabel={time (s)},
+  xlabel style={font=\footnotesize},
+  ylabel style={font=\footnotesize},
+  tick label style={font=\scriptsize},
+  title style={font=\small},
+  grid=major,
+  grid style={gray!18},
+  axis line style={gray!60},
+  tick style={gray!60},
+  every axis plot/.append style={line width=0.9pt},
+]
+
+\nextgroupplot[title={Left turn (trial 1)},
+  ylabel={heading (deg)}]
+\addplot[odomblue] table[col sep=comma,x=time_s,y=odom_mag]
+  {../../results/timeseries_trial_01_left.csv};
+\addplot[gyroorange, dashed] table[col sep=comma,x=time_s,y=gyro_mag]
+  {../../results/timeseries_trial_01_left.csv};
+\draw[gray!70, dashed, line width=0.5pt] (axis cs:1.547,0) -- (axis cs:1.547,110);
+\node[font=\scriptsize, text=gray, rotate=90, anchor=south]
+  at (axis cs:1.59,52) {stop};
+\draw[gray!80, line width=0.5pt] (axis cs:2.90,91.3) -- (axis cs:2.90,95.2);
+
+\nextgroupplot[title={Right turn (trial 2)},
+  ylabel={}]
+\addplot[odomblue] table[col sep=comma,x=time_s,y=odom_mag]
+  {../../results/timeseries_trial_02_right.csv};
+\addplot[gyroorange, dashed] table[col sep=comma,x=time_s,y=gyro_mag]
+  {../../results/timeseries_trial_02_right.csv};
+\draw[gray!70, dashed, line width=0.5pt] (axis cs:1.367,0) -- (axis cs:1.367,110);
+\node[font=\scriptsize, text=gray, rotate=90, anchor=south]
+  at (axis cs:1.41,52) {stop};
+\draw[gray!80, line width=0.5pt] (axis cs:2.90,91.0) -- (axis cs:2.90,96.5);
+
+\end{groupplot}
+\node[anchor=south, font=\scriptsize, inner sep=0pt]
+  at ([yshift=1mm]current bounding box.north) {%
+  \tikz[baseline=-0.6ex]{\draw[odomblue,line width=1pt] (0,0)--(5mm,0);}~encoder odometry\quad
+  \tikz[baseline=-0.6ex]{\draw[gyroorange,dashed,line width=1pt] (0,0)--(5mm,0);}~gyro (physical)};
+\end{tikzpicture}
+\end{document}

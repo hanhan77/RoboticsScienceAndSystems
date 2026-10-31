@@ -46,6 +46,21 @@ class OdometryModel_c {
     void reset(float x = 0.0, float y = 0.0, float theta = 0.0);
 
     /**
+     * @brief Sets the pose and count baseline in the same instant.
+     * @param x Starting x coordinate in millimetres.
+     * @param y Starting y coordinate in millimetres.
+     * @param theta Starting heading in radians.
+     * @param leftCount Left encoder count to treat as the zero reference.
+     * @param rightCount Right encoder count to treat as the zero reference.
+     * @note Use this when the wheels may already have moved before the first
+     * update (for example, at the instant a trial is armed). The next update
+     * adds motion relative to these counts instead of discarding it as a
+     * baseline. This sends no I2C command.
+     */
+    void reset(float x, float y, float theta,
+               int32_t leftCount, int32_t rightCount);
+
+    /**
      * @brief Processes one successfully acquired pair of absolute wheel counts.
      * @return True after a pose update; false for the first count baseline or
      * invalid geometry. Geometry values must be finite and greater than zero.

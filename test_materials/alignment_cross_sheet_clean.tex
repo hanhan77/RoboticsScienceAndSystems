@@ -1,0 +1,60 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[a4paper,margin=10mm]{geometry}
+\usepackage{tikz}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\begin{document}
+
+{\Large\bfseries 90\textdegree{} TURN TEST --- PLACEMENT SHEET}\par
+\vspace{1mm}
+{\small Place the robot centred on the cross, facing the arrow. This line is a placement
+reference only; the robot turns by encoder target and does not read the line.}\par
+\vspace{6mm}
+
+\begin{center}
+\begin{tikzpicture}[x=1mm,y=1mm]
+
+  % Robot footprint guide (slightly larger than the 3Pi+ body, ~97 x 92 mm)
+  \draw[gray!55, dashed, line width=0.35mm] (-52,-50) rectangle (52,50);
+  \foreach \x in {-52,52} {
+    \draw[gray!55, line width=0.35mm] (\x,-50) -- (\x,-43);
+    \draw[gray!55, line width=0.35mm] (\x,43) -- (\x,50);
+  }
+  \foreach \y in {-50,50} {
+    \draw[gray!55, line width=0.35mm] (-52,\y) -- (-45,\y);
+    \draw[gray!55, line width=0.35mm] (45,\y) -- (52,\y);
+  }
+
+  % Starting heading line (0 deg = up)
+  \draw[line width=1.2mm] (0,-50) -- (0,62);
+  \draw[gray!60, dashed, line width=0.35mm] (0,62) -- (0,104);
+  \draw[gray!60, dashed, line width=0.35mm] (0,-50) -- (0,-98);
+
+  % Centre cross
+  \draw[line width=0.8mm] (-14,0) -- (14,0);
+  \draw[line width=0.8mm] (0,-14) -- (0,14);
+  \fill[black] (0,0) circle (1.0);
+
+  % Wheel contact lines (nominal 86 mm separation)
+  \draw[gray!70, line width=0.3mm] (-43,-22) -- (-43,22);
+  \draw[gray!70, line width=0.3mm] (43,-22) -- (43,22);
+
+  % Arrow at the front of the heading line
+  \draw[line width=1.2mm, ->, >=stealth] (0,62) -- (0,78);
+
+  \node[font=\small\bfseries, anchor=south] at (0,106) {0\textdegree{} START / FRONT};
+  \node[font=\scriptsize, anchor=north] at (0,-101) {placement line};
+
+  % 20 mm print-scale check
+  \draw[line width=0.3mm] (-10,92) -- (10,92);
+  \foreach \x in {-10,-5,...,10} {
+    \draw[line width=0.3mm] (\x,92) -- (\x,95);
+  }
+  \node[font=\scriptsize, anchor=south] at (0,95) {20 mm check};
+
+\end{tikzpicture}
+\end{center}
+
+\end{document}

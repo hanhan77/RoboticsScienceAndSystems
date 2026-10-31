@@ -1,0 +1,59 @@
+\documentclass[border=6pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
+\definecolor{odomblue}{HTML}{2A78D6}
+\definecolor{gyroorange}{HTML}{D95926}
+\begin{document}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=9mm, ylabels at=edge left},
+  width=44mm, height=42mm,
+  xmin=0.5, xmax=11.5,
+  xtick={1,3,5,7,9,11},
+  xlabel={trial},
+  xlabel style={font=\footnotesize},
+  ylabel style={font=\footnotesize},
+  tick label style={font=\scriptsize},
+  title style={font=\small},
+  grid=major,
+  grid style={gray!18},
+  axis line style={gray!60},
+  tick style={gray!60},
+  legend style={at={(0.02,0.98)}, anchor=north west, font=\tiny,
+    draw=none, fill=white, fill opacity=0.85, inner sep=1pt, row sep=0.5pt},
+]
+
+\nextgroupplot[title={(a) Turn scale},
+  ylabel={effective separation (mm)}, ymin=83, ymax=91]
+\fill[gray!12] (axis cs:4.65,83) rectangle (axis cs:5.35,91);
+\draw[gray!70, dashed, line width=0.6pt] (axis cs:0.5,90) -- (axis cs:11.5,90);
+\node[font=\scriptsize, text=gray, anchor=north west]
+  at (axis cs:0.6,89.85) {nominal 90};
+\draw[odomblue, line width=0.9pt] (axis cs:0.5,85.977) -- (axis cs:11.5,85.977);
+\node[font=\scriptsize, text=odomblue, anchor=south west]
+  at (axis cs:5.55,86.05) {mean 86.0};
+\addplot[only marks, mark=*, mark size=2.2pt, odomblue]
+  table[col sep=comma,x=trial,y=sep_stop_mm] {../../results/plot_left.csv};
+\addplot[only marks, mark=triangle*, mark size=2.8pt, gyroorange]
+  table[col sep=comma,x=trial,y=sep_stop_mm] {../../results/plot_right.csv};
+
+\nextgroupplot[title={(b) Final error},
+  ylabel={under-report (deg)}, ymin=0, ymax=10]
+\fill[gray!12] (axis cs:4.65,0) rectangle (axis cs:5.35,10);
+\draw[gray!70, dashed, line width=0.6pt] (axis cs:0.5,0) -- (axis cs:11.5,0);
+\draw[odomblue, line width=0.9pt] (axis cs:0.5,5.17) -- (axis cs:11.5,5.17);
+\node[font=\scriptsize, text=odomblue, anchor=north west]
+  at (axis cs:0.6,5.10) {mean 5.2};
+\addplot[only marks, mark=*, mark size=2.2pt, odomblue]
+  table[col sep=comma,x=trial,y=under_final_deg] {../../results/plot_left.csv};
+\addplot[only marks, mark=triangle*, mark size=2.8pt, gyroorange]
+  table[col sep=comma,x=trial,y=under_final_deg] {../../results/plot_right.csv};
+\legend{left,right}
+
+\end{groupplot}
+\end{tikzpicture}
+\end{document}

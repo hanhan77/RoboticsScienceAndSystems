@@ -1,1 +1,11 @@
 .github/
+.DS_Store
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+__pycache__/
+*.pyc
+/AssessmentSpecification_SEMTM0043.pdf
+/Seven_Test_Maps_Solid_Corners.pdf

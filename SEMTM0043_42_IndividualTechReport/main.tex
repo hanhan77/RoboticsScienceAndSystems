@@ -1,0 +1,110 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{cw2026-report}
+
+\newcommand{\ReportTitle}{Encoder odometry heading scale in 90\textdegree{} junction turns}
+\newcommand{\ReportSubtitle}{Measured error, repeatability, and implications for the digital twin}
+
+% EDIT TO ADD YOUR UNIQUE BRISTOL STUDENT ID NUMBER (7 digits).
+\newcommand{\StudentID}{2071736}
+
+\begin{document}
+\ReportHeader
+
+\begin{multicols*}{2}
+\raggedcolumns
+
+\section*{Subsystem and investigation aim}
+Odometry is the only heading source available to our maze line-following
+robot between junctions. The local model converts wheel counts to heading
+using a wheel radius $r=16$~mm, wheel separation $b=90$~mm and
+$N=358.3$~counts/rev (Pololu 3Pi+); the digital twin uses the same relationship. At every
+90\textdegree{} junction the robot therefore relies on the encoder-to-heading
+scale; an error in that scale accumulates along the route and makes the
+twin's pose prediction diverge from the real robot.
+
+This report asks how closely the encoder heading matches the physical heading
+during a 90\textdegree{} in-place turn, whether the error is repeatable, and
+what effective wheel separation explains it. If the nominal geometry were
+correct, the encoder heading $\theta_{\mathrm{odom}}$ would be
+90\textdegree{} with zero mean error; a systematic offset would instead
+identify a geometry calibration error.
+
+\section*{Measurement approach}
+Firmware in \texttt{Controller.cpp} waits for 500~ms with no encoder change,
+resets odometry, then drives both wheels at $\pm35$~PWM until the
+differential count reaches 503.86~counts, the nominal 90\textdegree{} target
+$\Delta N=\theta bN/(2\pi r)$. It then stops for 1.5~s. Ten trials (five left,
+five right, alternating) were run on one A4 sheet taped to a desk, with the
+robot centred on a printed cross and the same cable routing. Trial~5 was
+rejected after the USB cable snagged; the 4~s safety timeout stopped it at
+16.5\textdegree{}.
+
+The independent reference is the onboard LSM6DS33 gyro (104~Hz,
+$\pm245$~dps). Its $z$ rate is integrated and the bias is re-estimated during
+each 500~ms quiet window. Per trial we compute $\theta_{\mathrm{odom}}$ at the
+stop and after settling, $\theta_{\mathrm{true}}$ from the gyro, the
+direction-corrected error
+$e=\mathrm{sgn}(\theta)(\theta_{\mathrm{odom}}-\theta_{\mathrm{true}})$, and
+$b_{\mathrm{eff}}=\Delta N\,(2\pi r/N)/|\theta_{\mathrm{true}}|$. The gyro
+scale was checked against a printed protractor (agreement within about
+3\textdegree{}); the remaining uncertainty is slip and coast.
+
+% Replace all instructional text and captions with your own account.
+% Keep one A4 page, with one or two plots. See README.md for guidance.
+\ReportPlot{figures/fig_timeseries.pdf}{Heading during representative trials}
+  {Encoder and gyro headings for one left (trial~1) and one right
+   (trial~2) turn. The dashed line is the stop; afterwards the gyro coasts
+   while the encoder changes only with the remaining counts.}
+  {fig:timeseries}
+
+\columnbreak
+
+\section*{Results and interpretation}
+Figure~\ref{fig:timeseries} shows representative left and right trials. The
+two headings track during the turn but separate by the stop: in trial~1 the
+encoder reports 90.6\textdegree{} while the gyro has reached
+94.2\textdegree{}. The gyro then continues to change after the stop, whereas
+the encoder only accumulates the remaining wheel counts.
+
+\ReportPlot{figures/fig_summary.pdf}{Per-trial scale and final error}
+  {(a) Effective separation from counts and gyro at the stop. (b) Final
+   encoder under-report after settling. Circles: left; triangles: right;
+   shaded band: rejected trial~5; solid/dashed: mean and nominal/zero.}
+  {fig:summary}
+
+Across the ten valid trials, $\theta_{\mathrm{odom}}$ at the stop was
+$90.52\textdegree{}\pm0.25\textdegree{}$ and the gyro
+$94.77\textdegree{}\pm1.1\textdegree{}$. The encoder under-reported the turn
+in every trial: $4.25\textdegree{}\pm1.09\textdegree{}$ at the stop (95\% CI
+3.47--5.03\textdegree{}) and $5.17\textdegree{}\pm1.75\textdegree{}$ after
+settling (CI 3.92--6.42\textdegree{}). The implied separation was
+$85.98\pm0.99$~mm (CI 85.27--86.69~mm), 4.47\% below the nominal 90~mm
+(Figure~\ref{fig:summary}a). Rescaling the odometry by $90/85.98$ removes the
+stop bias (mean $-0.01\textdegree{}$, SD $1.09\textdegree{}$); the final
+residual is $-0.92\textdegree{}\pm1.76\textdegree{}$ because the coast
+rotation is not counted. No significant left/right difference was found ($p=0.135$ at the stop,
+$p=0.437$ after settling): the scale error is a direction-independent
+geometry error with about 1\textdegree{} (1.2\%) random variation.
+
+\section*{Implications for the digital twin}
+The twin instantiates the same model with $r=16$~mm and $b=90$~mm
+(\texttt{DigitalTwin/Simulator.pde}), using $\Delta\theta=(d_R-d_L)/b$. Setting $b=86.0$~mm, or scaling $\theta$ by
+1.047, removes the 4.5\% bias at the stop. With $b=90$~mm, four successive
+90\textdegree{} turns accumulate about 17\textdegree{} of heading error at the
+stop (about 21\textdegree{} after coast); the simulated robot would predict a
+different corridor from the real one. The twin should also represent the short post-stop coast (mean 1.3\textdegree{}, up to
+3.3\textdegree{}); integrating counts alone under-predicts the final heading
+by about 1\textdegree{} per turn. A check is five fresh 90\textdegree{} turns
+with $b=86.0$~mm; a mean residual above 1\textdegree{} or an SD above
+2\textdegree{} would require revisiting the calibration or coast model. The
+result applies to in-place turns at PWM~35 on paper; other conditions need a
+separate check.
+
+\EvidenceNote{Code: \texttt{MyFirstRobot/Controller.*}, \texttt{MyFirstRobot.ino},
+\texttt{OdometryModel.*}. Data:
+\path{test_materials/turn_capture_main.txt} (trial~5 rejected);
+\path{results/turn_trial_summary.csv}. Analysis:
+\path{analysis/analyse_turn_trials.py}.}
+
+\end{multicols*}
+\end{document}

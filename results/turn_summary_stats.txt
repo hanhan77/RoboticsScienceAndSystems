@@ -1,0 +1,62 @@
+TURN TRIAL ANALYSIS
+===================
+input: /Users/han/file/robotics/MyFirstRobot/test_materials/turn_capture_main.txt
+target counts for 90 deg: 503.86
+nominal separation: 90 mm
+mm per count: 0.280578 mm
+
+Per-trial data
+----------------------------------------------------------------------------------------------------
+trial dir dur_ms prog_stop odom_stop gyro_stop odom_final gyro_final coast err_stop err_final sep_stop sep_final valid
+    1   L   1547       507     90.56     94.16      91.28      95.18  1.01    -3.60     -3.90    86.56     86.31  True
+    2   R   1367       508    -90.74    -95.36     -90.92     -96.50  1.14    -4.62     -5.58    85.64     84.80  True
+    3   L   2704       507     90.56     95.02      90.56      96.34  1.33    -4.46     -5.78    85.78     84.60  True
+    4   R   1264       504    -90.02    -94.69     -90.92     -98.01  3.33    -4.66     -7.09    85.57     83.49  True
+    5   L   3990        85     15.18     16.53      15.18      16.67  0.14    -1.34     -1.49    82.69     81.98 False
+    6   R   1264       506    -90.38    -93.49     -90.74     -94.85  1.36    -3.11     -4.11    87.01     86.10  True
+    7   L   2909       507     90.56     96.83      90.74      98.80  1.97    -6.26     -8.06    84.18     82.66  True
+    8   R   1224       508    -90.74    -93.12     -91.45     -93.29  0.17    -2.38     -1.84    87.70     88.23  True
+    9   L   2831       506     90.38     94.93      90.56      95.08  0.15    -4.55     -4.52    85.69     85.72  True
+   10   R   1281       509    -90.92    -94.65     -91.10     -95.94  1.30    -3.73     -4.85    86.45     85.45  True
+   11   L   1221       506     90.38     95.48      90.56      96.55  1.07    -5.10     -5.99    85.20     84.42  True
+
+Summary (direction-corrected error: negative = encoder under-reports)
+----------------------------------------------------------------------------------------------------
+[all]
+  duration        n=10, mean=1761 ms, SD=735 ms, 95% CI [1236, 2287] ms
+  err at stop     n=10, mean=-4.25 deg, SD=1.09 deg, 95% CI [-5.03, -3.47] deg
+  err at settle   n=10, mean=-5.17 deg, SD=1.75 deg, 95% CI [-6.42, -3.92] deg
+  coast            n=10, mean=1.28 deg, SD=0.90 deg, 95% CI [0.64, 1.93] deg
+  sep at stop     n=10, mean=85.98 mm, SD=0.99 mm, 95% CI [85.27, 86.69] mm
+  sep at settle   n=10, mean=85.18 mm, SD=1.57 mm, 95% CI [84.06, 86.30] mm
+  corrected stop  n=10, mean=-0.01 deg, SD=1.09 deg, 95% CI [-0.79, 0.77] deg
+  corrected final n=10, mean=-0.92 deg, SD=1.76 deg, 95% CI [-2.18, 0.34] deg
+[left]
+  duration        n=5, mean=2242 ms, SD=795 ms, 95% CI [1255, 3230] ms
+  err at stop     n=5, mean=-4.79 deg, SD=0.98 deg, 95% CI [-6.01, -3.58] deg
+  err at settle   n=5, mean=-5.65 deg, SD=1.60 deg, 95% CI [-7.64, -3.66] deg
+  coast            n=5, mean=1.11 deg, SD=0.66 deg, 95% CI [0.29, 1.92] deg
+  sep at stop     n=5, mean=85.48 mm, SD=0.88 mm, 95% CI [84.39, 86.57] mm
+  sep at settle   n=5, mean=84.74 mm, SD=1.40 mm, 95% CI [83.00, 86.48] mm
+  corrected stop  n=5, mean=-0.56 deg, SD=0.98 deg, 95% CI [-1.78, 0.66] deg
+  corrected final n=5, mean=-1.40 deg, SD=1.61 deg, 95% CI [-3.40, 0.59] deg
+[right]
+  duration        n=5, mean=1280 ms, SD=53 ms, 95% CI [1214, 1346] ms
+  err at stop     n=5, mean=-3.70 deg, SD=0.98 deg, 95% CI [-4.92, -2.48] deg
+  err at settle   n=5, mean=-4.69 deg, SD=1.94 deg, 95% CI [-7.10, -2.28] deg
+  coast            n=5, mean=1.46 deg, SD=1.15 deg, 95% CI [0.03, 2.88] deg
+  sep at stop     n=5, mean=86.47 mm, SD=0.91 mm, 95% CI [85.35, 87.60] mm
+  sep at settle   n=5, mean=85.61 mm, SD=1.75 mm, 95% CI [83.44, 87.79] mm
+  corrected stop  n=5, mean=0.54 deg, SD=0.99 deg, 95% CI [-0.69, 1.77] deg
+  corrected final n=5, mean=-0.43 deg, SD=1.95 deg, 95% CI [-2.85, 1.99] deg
+
+calibrated separation (mean of stop estimates): 85.977 mm
+scale factor applied to odometry: 1.04680
+separation vs nominal 90 mm: -4.47%
+
+Left vs right (permutation test on the difference in means)
+  under-report at stop:  p = 0.135
+  under-report at settle: p = 0.437
+  separation at stop:    p = 0.135
+
+Excluded trials: 5 (3990 ms, 85 counts)
