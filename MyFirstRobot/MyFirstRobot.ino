@@ -21,30 +21,16 @@ Controller_c controller;
 /** @brief Initialises serial, WiFi, IMU, and the supplied robot-controller baseline. */
 void setup() {
 
-  Serial.begin(115200);
-  server.begin();
+  Serial0.begin(115200);
 
+  // Odometry exercises do not require the middleware team-name transaction.
   robot.initialise();
-//  robot.initialise("team name");
-
-
-  // Robot_c starts the shared I2C bus before RobotIMU_c uses it. IMU readings
-  // come directly from the sensor ICs and do not pass through the middleware.
-  if (!imu.initialise() ) {
-    Serial.println("Warning: LSM6DS33 IMU was not detected.");
-    robot.setLED( 90, 50, 0, 100 ); // orange warning
-  }
 
 }
 
 
 /** @brief Maintains telemetry transport and runs the controller repeatedly. */
 void loop() {
-  // Accept or maintain the optional Processing telemetry connection. The
-  // controller continues to run even when no client is connected.
-  server.update();
-
-  
   // Run an iteration of the robot controller code.
   // Develop controller routines in Controller.cpp; edit parameters in Controller.h.
   controller.update(robot, server);

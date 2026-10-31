@@ -97,6 +97,9 @@ class Controller_c {
     /** @brief Applies the nominal controller behaviour for the current mode. */
     void runLineFollower(Robot_c &robot, unsigned long now);
 
+    /** @brief Reports encoder counts and the local odometry pose over Serial. */
+    void reportOdometry(Robot_c &robot, unsigned long now);
+
     /**
      * @brief Sends the current controller and robot snapshot as one CSV record.
      * @note Controller.cpp writes these 14 columns, in order: timestamp_ms,

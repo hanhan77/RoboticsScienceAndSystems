@@ -60,42 +60,21 @@ void Controller_c::update(Robot_c &robot, RobotWifiAP_c &server) {
   // begins counting again.  We now run the remaining controller code.
   update_timer.resetTimer(now);
 
-  // Ask the robot for latest information on surface reflectance sensors.
-  robot.getSurfaceSensors();
-
   // Ask the robot for the latest encoder information, and then use this
   // to update the odometry on board the StampC3 (see OdometryModel.h).
   if (robot.getEncoders()) {
     odometry.update(robot.getLeftEncoderCount(), robot.getRightEncoderCount());
   }
 
-  // Pose estimation from the Pololu 3Pi robot itself.
-  robot.getPose();
+  // Exercise 01 reports continuously after boot. The button and line follower
+  // are intentionally bypassed so this test cannot command the motors.
+  reportOdometry(robot, now);
 
-  // While waiting, a button press sets signal to 1 and starts the physical
-  // robot's line follower, even without Processing connected. The transmitted
-  // signal also starts an armed Digital Twin live comparison. This is a start
-  // control, not a start/stop toggle; further presses are ignored while signal is 1.
-  if (signal == 0) {
-    if (robot.isButtonPressed()) {
-      setSignal(1);
-    }
-  }
-
-  // The user has started the demonstration, so we run the line following
-  // controller code.
-  if (signal == 1) {
-    runLineFollower(robot, now);
-
-  }
-
-  // Use another TaskTimer_c to limit how often we transmit telemetry data
-  // on WiFi and Serial.
-  if (telemetry_timer.isReady(now)) {
-    telemetry_timer.resetTimer(now);
-    publishTelemetry(robot, server, now);
-
-  }
+  // Telemetry is disabled during the encoder and pose acquisition exercise.
+  // if (telemetry_timer.isReady(now)) {
+  //   telemetry_timer.resetTimer(now);
+  //   publishTelemetry(robot, server, now);
+  // }
 }
 
 bool Controller_c::lineDetected(const Robot_c &robot) const {
@@ -136,6 +115,21 @@ void Controller_c::runLineFollower(Robot_c &robot, unsigned long now) {
   float error = (float)robot.surface.reading[1] - (float)robot.surface.reading[3];
   float turn = error * LINE_FOLLOW_GAIN;
   robot.setMotorPWM(BASE_PWM - turn, BASE_PWM + turn);
+}
+
+void Controller_c::reportOdometry(Robot_c &robot, unsigned long now) {
+  Serial0.print(now);
+  Serial0.print(",");
+  Serial0.print(robot.getLeftEncoderCount());
+  Serial0.print(",");
+  Serial0.print(robot.getRightEncoderCount());
+  Serial0.print(",");
+  Serial0.print(odometry.pose.x);
+  Serial0.print(",");
+  Serial0.print(odometry.pose.y);
+  Serial0.print(",");
+  Serial0.print(odometry.pose.theta);
+  Serial0.print("\n");
 }
 
 void Controller_c::publishTelemetry(Robot_c &robot, RobotWifiAP_c &server, unsigned long timestamp_ms) {
