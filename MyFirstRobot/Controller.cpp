@@ -156,8 +156,8 @@ void Controller_c::publishTelemetry(Robot_c &robot, RobotWifiAP_c &server, unsig
     robot.surface.reading[4],
     signal
   );
-  if ( Serial ) { // If serial is connected
-    Serial.printf(
+  if ( Serial0 ) { // If serial is connected
+    Serial0.printf(
       "%lu,%.2f,%.2f,%.5f,%d,%d,%ld,%ld,%u,%u,%u,%u,%u,%u\n",
       timestamp_ms,
       odometry.pose.x,

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git ls-remote *)",
+      "Bash(unzip -l /Users/han/file/robotics/MyFirstRobot_archive/assessment1_2026-11-01.zip)",
+      "Bash(git switch *)"
+    ]
+  }
+}
